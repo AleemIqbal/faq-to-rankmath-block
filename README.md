@@ -1,4 +1,4 @@
-<h1>FAQ Converter</h1>
+<h1>Plain Text to Rankmath FAQ Converter</h1>
   <p>This is a PHP script that converts plain text FAQ content into Rank Math FAQ block format. It also includes a simple HTML form that allows users to input their FAQ text and convert it into Rank Math FAQ block format.</p>
   <h2>How to Use</h2>
   <ol>
