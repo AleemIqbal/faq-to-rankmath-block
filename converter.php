@@ -10,28 +10,46 @@ function convertToRankMathFAQ($text)
     $currentQuestion = null;
     $currentAnswer = '';
 
+    $hasQandA = preg_match('/^(Q:|A:)/m', $text);
+
     foreach ($lines as $line) {
-        if (preg_match('/^Q: (.+)/', $line, $matches)) {
-            if ($currentQuestion !== null) {
+        if ($hasQandA) {
+            if (preg_match('/^Q: (.+)/', $line, $matches)) {
+                if ($currentQuestion !== null) {
+                    $questions[] = [
+                        'title' => $currentQuestion,
+                        'content' => $currentAnswer
+                    ];
+                }
+                $currentQuestion = $matches[1];
+                $currentAnswer = '';
+            } elseif (preg_match('/^A: (.+)/', $line, $matches)) {
+                $currentAnswer .= $matches[1];
+            }
+        } else {
+            if (empty(trim($line))) continue;
+            
+            if ($currentQuestion === null) {
+                $currentQuestion = $line;
+            } else {
+                $currentAnswer = $line;
                 $questions[] = [
                     'title' => $currentQuestion,
                     'content' => $currentAnswer
                 ];
+                $currentQuestion = null;
+                $currentAnswer = '';
             }
-            $currentQuestion = $matches[1];
-            $currentAnswer = '';
-        } elseif (preg_match('/^A: (.+)/', $line, $matches)) {
-            $currentAnswer .= $matches[1];
         }
     }
 
-    if ($currentQuestion !== null) {
+    if ($currentQuestion !== null && !$hasQandA) {
         $questions[] = [
             'title' => $currentQuestion,
             'content' => $currentAnswer
         ];
     }
-
+    
     $faqItems = [];
     $faqJson = [];
 
